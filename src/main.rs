@@ -51,3 +51,25 @@ fn main() {
         }
     }
 }
+
+trait Escape {
+    fn escape(&mut self);
+    fn escaped(&self);
+    fn unescape(&mut self);
+    fn unescaped(&self);
+}
+
+impl Escape for String {
+    fn escape(&mut self) {
+        todo!();
+    }
+    fn escaped(&self) {
+        todo!();
+    }
+    fn unescape(&mut self) {
+        todo!();
+    }
+    fn unescaped(&self) {
+        todo!();
+    }
+}
