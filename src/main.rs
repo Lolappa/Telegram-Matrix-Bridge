@@ -13,7 +13,9 @@ fn main() {
     let fifo_path = args.get(2).expect("Please provide fifo path");
 
     let api = Api::new(api_key);
-    let mut file = OpenOptions::new().write(true).open(fifo_path).expect("Failed to open file");
+    let mut file = OpenOptions::new().write(true)
+                                     .open(fifo_path)
+                                     .expect("Failed to open file");
 
     let mut update_params = GetUpdatesParams::builder().build();
 
