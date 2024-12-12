@@ -9,8 +9,10 @@ use std::env;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let api = Api::new(args.get(1).expect("Please provide bot token"));
     let fifo_path = args.get(2).expect("Please provide fifo path");
+
+    let api = Api::new(args.get(1).expect("Please provide bot token"));
+    let mut file = OpenOptions::new().write(true).open(fifo_path).expect("Failed to open file");
 
     let mut update_params = GetUpdatesParams::builder().build();
 
@@ -34,7 +36,6 @@ fn main() {
                         if let Err(error) = api.send_message(&send_message_params) {
                             println!("Failed to send message: {error:?}");
                         }
-                        let mut file = OpenOptions::new().write(true).open(fifo_path).expect("Failed to open file");
                         file.write(message.text.as_ref().unwrap().as_bytes());
                         //file.sync_all();
                     }
