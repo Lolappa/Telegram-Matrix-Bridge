@@ -5,9 +5,9 @@ use frankenstein::{
     objects::UpdateContent,
     TelegramApi,
 };
-use matrix_sdk::ruma::events::room::message::{
+use matrix_sdk::{ruma::events::room::message::{
     FormattedBody, MessageFormat, MessageType, RoomMessageEventContent, TextMessageEventContent
-};
+}, Client};
 use std::env;
 
 fn main() {
@@ -23,8 +23,30 @@ fn main() {
             return;
             }
         };
+    main_loop(bot_token, homeserver_url, username, password);
+}
 
+async fn main_loop(
+    bot_token: String,
+    homeserver_url: String,
+    username: String,
+    password: String
+) {
     let api = Api::new(&bot_token);
+    let matrix_client = Client::builder()
+        .homeserver_url(homeserver_url)
+        .build()
+        .await
+        .expect("Failed to connect to Matrix");
+
+    matrix_client
+        .matrix_auth()
+        .login_username(&username, &password)
+        .initial_device_display_name("Telegram bridge")
+        .await
+        .expect("Failed to log in to Matrix");
+
+    println!("logged in Matrix as {}", username);
 
     let mut update_params = GetUpdatesParams::builder().build();
 
