@@ -58,17 +58,3 @@ fn main() {
         }
     }
 }
-
-trait Escape {
-    fn escape(&self) -> Self;
-    fn unescape(&self) -> Self;
-}
-
-impl Escape for String {
-    fn escape(&self) -> Self {
-        todo!();
-    }
-    fn unescape(&self) -> Self {
-        todo!();
-    }
-}
