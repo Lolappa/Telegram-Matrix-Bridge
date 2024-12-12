@@ -12,10 +12,19 @@ use std::env;
 
 fn main() {
     // Argument parsing
-    let args: Vec<String> = env::args().collect();
-    let api_key = args.get(1).expect("Please provide bot token");
+    let (bot_token, homeserver_url, username, password) =
+        match (env::args().nth(1), env::args().nth(2), env::args().nth(3), env::args().nth(4)) {
+            (Some(a), Some(b), Some(c), Some(d)) => (a, b, c, d),
+            _ => {
+                eprintln!(
+                    "Usage: {} <telegram bot token> <homeserver_url> <username> <password>",
+                    env::args().next().unwrap()
+                );
+            return;
+            }
+        };
 
-    let api = Api::new(api_key);
+    let api = Api::new(&bot_token);
 
     let mut update_params = GetUpdatesParams::builder().build();
 
@@ -28,7 +37,7 @@ fn main() {
             Ok(response) => {
                 for update in response.result {
                     if let UpdateContent::Message(message) = update.content {
-                        let reply_parameters = ReplyParameters::builder()
+                        /*let reply_parameters = ReplyParameters::builder()
                             .message_id(message.message_id)
                             .build();
                         let send_message_params = SendMessageParams::builder()
@@ -38,9 +47,11 @@ fn main() {
                             .build();
                         if let Err(error) = api.send_message(&send_message_params) {
                             println!("Failed to send message: {error:?}");
-                        }
+                        }*/
 
-                        let mut content = TextMessageEventContent::plain(message.text.as_ref().unwrap());
+                        let mut content = TextMessageEventContent::plain(
+                            message.text.as_ref().unwrap()
+                        );
                         content.formatted = Some(FormattedBody {
                             format: MessageFormat::from("bridge"),
                             body: message.text.as_ref().unwrap().to_string()
