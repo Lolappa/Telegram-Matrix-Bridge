@@ -1,21 +1,21 @@
-use frankenstein::{Api, GetUpdatesParams};
-use frankenstein::api_params::{ReplyParameters, SendMessageParams};
-use frankenstein::objects::UpdateContent;
-use frankenstein::TelegramApi;
-use std::fs::OpenOptions;
-use std::io::Write;
+use frankenstein::{
+    Api,
+    GetUpdatesParams,
+    api_params::{ ReplyParameters, SendMessageParams },
+    objects::UpdateContent,
+    TelegramApi,
+};
+use matrix_sdk::ruma::events::room::message::{
+    FormattedBody, MessageFormat, MessageType, RoomMessageEventContent, TextMessageEventContent
+};
 use std::env;
 
 fn main() {
+    // Argument parsing
     let args: Vec<String> = env::args().collect();
-
     let api_key = args.get(1).expect("Please provide bot token");
-    let fifo_path = args.get(2).expect("Please provide fifo path");
 
     let api = Api::new(api_key);
-    let mut file = OpenOptions::new().write(true)
-                                     .open(fifo_path)
-                                     .expect("Failed to open file");
 
     let mut update_params = GetUpdatesParams::builder().build();
 
@@ -39,8 +39,15 @@ fn main() {
                         if let Err(error) = api.send_message(&send_message_params) {
                             println!("Failed to send message: {error:?}");
                         }
-                        file.write(message.text.as_ref().unwrap().as_bytes());
-                        //file.sync_all();
+
+                        let content = TextMessageEventContent::plain(message.text.as_ref().unwrap());
+                        let formatted = FormattedBody {
+                            format: MessageFormat::from("bridge"),
+                            body: message.text.as_ref().unwrap().to_string()
+                        };
+                        let content = RoomMessageEventContent::new(
+                            MessageType::Text(content)
+                        );
                     }
                     update_params.offset = Some(i64::from(update.update_id) + 1);
                 }
