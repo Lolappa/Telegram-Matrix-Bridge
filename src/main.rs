@@ -40,11 +40,11 @@ fn main() {
                             println!("Failed to send message: {error:?}");
                         }
 
-                        let content = TextMessageEventContent::plain(message.text.as_ref().unwrap());
-                        let formatted = FormattedBody {
+                        let mut content = TextMessageEventContent::plain(message.text.as_ref().unwrap());
+                        content.formatted = Some(FormattedBody {
                             format: MessageFormat::from("bridge"),
                             body: message.text.as_ref().unwrap().to_string()
-                        };
+                        });
                         let content = RoomMessageEventContent::new(
                             MessageType::Text(content)
                         );
