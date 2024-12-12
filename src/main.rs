@@ -53,23 +53,15 @@ fn main() {
 }
 
 trait Escape {
-    fn escape(&mut self);
-    fn escaped(&self);
-    fn unescape(&mut self);
-    fn unescaped(&self);
+    fn escape(&self) -> Self;
+    fn unescape(&self) -> Self;
 }
 
 impl Escape for String {
-    fn escape(&mut self) {
+    fn escape(&self) -> Self {
         todo!();
     }
-    fn escaped(&self) {
-        todo!();
-    }
-    fn unescape(&mut self) {
-        todo!();
-    }
-    fn unescaped(&self) {
+    fn unescape(&self) -> Self {
         todo!();
     }
 }
